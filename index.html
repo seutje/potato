@@ -328,6 +328,7 @@
 
         // Save game
         function saveGame() {
+            game.lastSave = Date.now();
             localStorage.setItem('potatoGame', JSON.stringify(game));
         }
 
@@ -482,17 +483,46 @@
             }
         }
 
+        let lastFrameTime = Date.now();
+
         // Game loop
-        setInterval(() => {
-            game.potatoes += game.pps / 10;
+        function gameLoop() {
+            const now = Date.now();
+            const delta = now - lastFrameTime;
+            lastFrameTime = now;
+
+            if (document.hidden) {
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            game.potatoes += game.pps * (delta / 1000);
             updateDisplay();
-        }, 100);
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Handle visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                const now = Date.now();
+                const offlineTime = (now - (game.lastSave || now)) / 1000;
+                const offlineGains = offlineTime * game.pps;
+                if (offlineGains > 0) {
+                    game.potatoes += offlineGains;
+                    alert(`Welcome back! You earned ${Math.floor(offlineGains)} potatoes while you were away.`);
+                }
+                lastFrameTime = now; // Reset frame time to prevent a huge jump
+            } else {
+                saveGame(); // Save when tab becomes inactive
+            }
+        });
 
         // Auto save
         setInterval(saveGame, 10000);
 
         // Initialize
         loadGame();
+        requestAnimationFrame(gameLoop);
     </script>
 </body>
 </html>
