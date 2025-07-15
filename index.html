@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potato Farming Empire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #8B4513 0%, #DEB887 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #654321;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .resource-display {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .potato-count {
+            color: #8B4513;
+        }
+        
+        .sweet-potato-count {
+            color: #FF6347;
+        }
+        
+        .main-button {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.5em;
+            background: #8B4513;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .main-button:hover {
+            background: #A0522D;
+            transform: scale(1.05);
+        }
+        
+        .upgrade-section {
+            margin-bottom: 20px;
+        }
+        
+        .upgrade-section h3 {
+            margin-bottom: 10px;
+            color: #654321;
+            border-bottom: 2px solid #DEB887;
+            padding-bottom: 5px;
+        }
+        
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f5f5f5;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .upgrade-item:hover {
+            background: #e8e8e8;
+            transform: translateX(5px);
+        }
+        
+        .upgrade-item button {
+            padding: 5px 15px;
+            background: #8B4513;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .upgrade-item button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .prestige-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .prestige-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: #FF6347;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .prestige-button:hover:not(:disabled) {
+            background: #FF4500;
+            transform: scale(1.1);
+        }
+        
+        .prestige-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .stats {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .sweet-upgrades {
+            border-top: 2px solid #FF6347;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+        
+        .sweet-upgrades h3 {
+            color: #FF6347;
+        }
+        
+        @keyframes grow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .growing {
+            animation: grow 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥔 Potato Farming Empire 🥔</h1>
+        
+        <div class="resource-display">
+            <div class="potato-count">
+                <span>Potatoes: </span>
+                <span id="potato-count">0</span>
+            </div>
+            <div class="sweet-potato-count">
+                <span>Sweet Potatoes: </span>
+                <span id="sweet-potato-count">0</span>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="panel">
+                <button class="main-button" onclick="harvestPotato()">🌱 Harvest Potatoes</button>
+                
+                <div class="stats">
+                    <div>Potatoes per click: <span id="ppc">1</span></div>
+                    <div>Potatoes per second: <span id="pps">0</span></div>
+                </div>
+                
+                <div class="prestige-section">
+                    <h3>Prestige</h3>
+                    <p>Reset your farm for <span id="prestige-gain">0</span> sweet potatoes</p>
+                    <p>Requires 1,000,000 potatoes</p>
+                    <button class="prestige-button" onclick="prestige()" id="prestige-btn">Prestige</button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <div class="upgrade-section">
+                    <h3>🛠️ Tools & Equipment</h3>
+                    <div class="upgrade-item">
+                        <span>Better Shovel (Level <span id="shovel-level">0</span>) - +1 PPC</span>
+                        <button onclick="buyUpgrade('shovel')">
+                            Cost: <span id="shovel-cost">10</span> 🥔
+                        </button>
+                    </div>
+                    <div class="upgrade-item">
+                        <span>Golden Shovel (Level <span id="golden-level">0</span>) - +5 PPC</span>
+                        <button onclick="buyUpgrade('golden')">
+                            Cost: <span id="golden-cost">100</span> 🥔
+                        </button>
+                    </div>
+                    <div class="upgrade-item">
+                        <span>Potato Harvester (Level <span id="harvester-level">0</span>) - +20 PPC</span>
+                        <button onclick="buyUpgrade('harvester')">
+                            Cost: <span id="harvester-cost">1000</span> 🥔
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="upgrade-section">
+                    <h3>🧑‍🌾 Farm Hands</h3>
+                    <div class="upgrade-item">
+                        <span>Lazy Worker (Owned: <span id="lazy-count">0</span>) - +0.5 PPS</span>
+                        <button onclick="buyWorker('lazy')">
+                            Cost: <span id="lazy-cost">50</span> 🥔
+                        </button>
+                    </div>
+                    <div class="upgrade-item">
+                        <span>Hard Worker (Owned: <span id="hard-count">0</span>) - +2 PPS</span>
+                        <button onclick="buyWorker('hard')">
+                            Cost: <span id="hard-cost">300</span> 🥔
+                        </button>
+                    </div>
+                    <div class="upgrade-item">
+                        <span>Expert Farmer (Owned: <span id="expert-count">0</span>) - +10 PPS</span>
+                        <button onclick="buyWorker('expert')">
+                            Cost: <span id="expert-cost">2000</span> 🥔
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="upgrade-section">
+                    <h3>🌿 Fertilizer</h3>
+                    <div class="upgrade-item">
+                        <span>Basic Fertilizer (Level <span id="basic-level">0</span>) - +10% PPS</span>
+                        <button onclick="buyUpgrade('basic')">
+                            Cost: <span id="basic-cost">500</span> 🥔
+                        </button>
+                    </div>
+                    <div class="upgrade-item">
+                        <span>Premium Fertilizer (Level <span id="premium-level">0</span>) - +25% PPS</span>
+                        <button onclick="buyUpgrade('premium')">
+                            Cost: <span id="premium-cost">5000</span> 🥔
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="sweet-upgrades">
+                    <h3>🍠 Sweet Potato Upgrades</h3>
+                    <div class="upgrade-item">
+                        <span>Ultra Shovel - +100% PPC</span>
+                        <button onclick="buySweetUpgrade('ultra')">
+                            Cost: <span id="ultra-cost">1</span> 🍠
+                        </button>
+                    </div>
+                    <div class="upgrade-item">
+                        <span>Mega Fertilizer - +200% PPS</span>
+                        <button onclick="buySweetUpgrade('mega')">
+                            Cost: <span id="mega-cost">3</span> 🍠
+                        </button>
+                    </div>
+                    <div class="upgrade-item">
+                        <span>Potato Paradise - +500% all production</span>
+                        <button onclick="buySweetUpgrade('paradise')">
+                            Cost: <span id="paradise-cost">10</span> 🍠
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let game = {
+            potatoes: 0,
+            sweetPotatoes: 0,
+            totalPotatoes: 0,
+            ppc: 1,
+            pps: 0,
+            upgrades: {
+                shovel: { level: 0, cost: 10, effect: 1 },
+                golden: { level: 0, cost: 100, effect: 5 },
+                harvester: { level: 0, cost: 1000, effect: 20 },
+                basic: { level: 0, cost: 500, effect: 0.1 },
+                premium: { level: 0, cost: 5000, effect: 0.25 }
+            },
+            workers: {
+                lazy: { count: 0, cost: 50, effect: 0.5 },
+                hard: { count: 0, cost: 300, effect: 2 },
+                expert: { count: 0, cost: 2000, effect: 10 }
+            },
+            sweetUpgrades: {
+                ultra: { owned: false, cost: 1 },
+                mega: { owned: false, cost: 3 },
+                paradise: { owned: false, cost: 10 }
+            }
+        };
+
+        // Load game
+        function loadGame() {
+            const saved = localStorage.getItem('potatoGame');
+            if (saved) {
+                const savedGame = JSON.parse(saved);
+                game = { ...game, ...savedGame };
+            }
+            updateDisplay();
+        }
+
+        // Save game
+        function saveGame() {
+            localStorage.setItem('potatoGame', JSON.stringify(game));
+        }
+
+        // Harvest potato
+        function harvestPotato() {
+            let gain = game.ppc;
+            if (game.sweetUpgrades.ultra.owned) gain *= 2;
+            if (game.sweetUpgrades.paradise.owned) gain *= 6;
+            
+            game.potatoes += gain;
+            game.totalPotatoes += gain;
+            
+            document.querySelector('.main-button').classList.add('growing');
+            setTimeout(() => {
+                document.querySelector('.main-button').classList.remove('growing');
+            }, 300);
+            
+            updateDisplay();
+            saveGame();
+        }
+
+        // Buy upgrade
+        function buyUpgrade(type) {
+            const upgrade = game.upgrades[type];
+            if (game.potatoes >= upgrade.cost) {
+                game.potatoes -= upgrade.cost;
+                upgrade.level++;
+                upgrade.cost = Math.floor(upgrade.cost * 1.5);
+                updateDisplay();
+                saveGame();
+            }
+        }
+
+        // Buy worker
+        function buyWorker(type) {
+            const worker = game.workers[type];
+            if (game.potatoes >= worker.cost) {
+                game.potatoes -= worker.cost;
+                worker.count++;
+                worker.cost = Math.floor(worker.cost * 1.2);
+                updateDisplay();
+                saveGame();
+            }
+        }
+
+        // Buy sweet upgrade
+        function buySweetUpgrade(type) {
+            const upgrade = game.sweetUpgrades[type];
+            if (game.sweetPotatoes >= upgrade.cost && !upgrade.owned) {
+                game.sweetPotatoes -= upgrade.cost;
+                upgrade.owned = true;
+                updateDisplay();
+                saveGame();
+            }
+        }
+
+        // Calculate PPS
+        function calculatePPS() {
+            let base = 0;
+            base += game.workers.lazy.count * game.workers.lazy.effect;
+            base += game.workers.hard.count * game.workers.hard.effect;
+            base += game.workers.expert.count * game.workers.expert.effect;
+            
+            let multiplier = 1;
+            multiplier += game.upgrades.basic.level * game.upgrades.basic.effect;
+            multiplier += game.upgrades.premium.level * game.upgrades.premium.effect;
+            
+            if (game.sweetUpgrades.mega.owned) multiplier *= 3;
+            if (game.sweetUpgrades.paradise.owned) multiplier *= 6;
+            
+            return base * multiplier;
+        }
+
+        // Calculate PPC
+        function calculatePPC() {
+            let base = 1;
+            base += game.upgrades.shovel.level * game.upgrades.shovel.effect;
+            base += game.upgrades.golden.level * game.upgrades.golden.effect;
+            base += game.upgrades.harvester.level * game.upgrades.harvester.effect;
+            
+            if (game.sweetUpgrades.ultra.owned) base *= 2;
+            if (game.sweetUpgrades.paradise.owned) base *= 6;
+            
+            return base;
+        }
+
+        // Update display
+        function updateDisplay() {
+            document.getElementById('potato-count').textContent = Math.floor(game.potatoes);
+            document.getElementById('sweet-potato-count').textContent = game.sweetPotatoes;
+            
+            game.ppc = calculatePPC();
+            game.pps = calculatePPS();
+            
+            document.getElementById('ppc').textContent = Math.floor(game.ppc);
+            document.getElementById('pps').textContent = game.pps.toFixed(1);
+            
+            // Update upgrade displays
+            Object.keys(game.upgrades).forEach(key => {
+                const upgrade = game.upgrades[key];
+                const levelEl = document.getElementById(`${key}-level`);
+                const costEl = document.getElementById(`${key}-cost`);
+                if (levelEl) levelEl.textContent = upgrade.level;
+                if (costEl) costEl.textContent = upgrade.cost;
+            });
+            
+            Object.keys(game.workers).forEach(key => {
+                const worker = game.workers[key];
+                const countEl = document.getElementById(`${key}-count`);
+                const costEl = document.getElementById(`${key}-cost`);
+                if (countEl) countEl.textContent = worker.count;
+                if (costEl) costEl.textContent = worker.cost;
+            });
+            
+            // Update sweet upgrades
+            Object.keys(game.sweetUpgrades).forEach(key => {
+                const upgrade = game.sweetUpgrades[key];
+                const button = event?.target || document.querySelector(`[onclick="buySweetUpgrade('${key}')"]`);
+                if (upgrade.owned && button) {
+                    button.textContent = 'Owned';
+                    button.disabled = true;
+                }
+            });
+            
+            // Update prestige
+            const prestigeGain = Math.floor(Math.sqrt(game.totalPotatoes / 1000000));
+            document.getElementById('prestige-gain').textContent = prestigeGain;
+            document.getElementById('prestige-btn').disabled = game.potatoes < 1000000;
+        }
+
+        // Prestige
+        function prestige() {
+            const prestigeGain = Math.floor(Math.sqrt(game.totalPotatoes / 1000000));
+            if (game.potatoes >= 1000000) {
+                game.sweetPotatoes += prestigeGain;
+                game.potatoes = 0;
+                game.totalPotatoes = 0;
+                
+                // Reset everything
+                Object.keys(game.upgrades).forEach(key => {
+                    game.upgrades[key].level = 0;
+                    game.upgrades[key].cost = game.upgrades[key].cost / Math.pow(1.5, game.upgrades[key].level || 1);
+                });
+                
+                Object.keys(game.workers).forEach(key => {
+                    game.workers[key].count = 0;
+                    game.workers[key].cost = game.workers[key].cost / Math.pow(1.2, game.workers[key].count || 1);
+                });
+                
+                updateDisplay();
+                saveGame();
+            }
+        }
+
+        // Game loop
+        setInterval(() => {
+            game.potatoes += game.pps / 10;
+            updateDisplay();
+        }, 100);
+
+        // Auto save
+        setInterval(saveGame, 10000);
+
+        // Initialize
+        loadGame();
+    </script>
+</body>
+</html>
