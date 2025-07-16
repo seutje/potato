@@ -207,19 +207,19 @@
                 <div class="upgrade-section">
                     <h3>🛠️ Tools & Equipment</h3>
                     <div class="upgrade-item">
-                        <span>Better Shovel (Level <span id="shovel-level">0</span>) - +1 PPC</span>
+                        <span>Better Shovel (Level <span id="shovel-level">0</span>) - +2 PPC</span>
                         <button onclick="buyUpgrade('shovel')">
                             Cost: <span id="shovel-cost">10</span> 🥔
                         </button>
                     </div>
                     <div class="upgrade-item">
-                        <span>Golden Shovel (Level <span id="golden-level">0</span>) - +5 PPC</span>
+                        <span>Golden Shovel (Level <span id="golden-level">0</span>) - +10 PPC</span>
                         <button onclick="buyUpgrade('golden')">
                             Cost: <span id="golden-cost">100</span> 🥔
                         </button>
                     </div>
                     <div class="upgrade-item">
-                        <span>Potato Harvester (Level <span id="harvester-level">0</span>) - +20 PPC</span>
+                        <span>Potato Harvester (Level <span id="harvester-level">0</span>) - +40 PPC</span>
                         <button onclick="buyUpgrade('harvester')">
                             Cost: <span id="harvester-cost">1000</span> 🥔
                         </button>
@@ -251,13 +251,13 @@
                 <div class="upgrade-section">
                     <h3>🌿 Fertilizer</h3>
                     <div class="upgrade-item">
-                        <span>Basic Fertilizer (Level <span id="basic-level">0</span>) - +10% PPS</span>
+                        <span>Basic Fertilizer (Level <span id="basic-level">0</span>) - +20% PPS</span>
                         <button onclick="buyUpgrade('basic')">
                             Cost: <span id="basic-cost">500</span> 🥔
                         </button>
                     </div>
                     <div class="upgrade-item">
-                        <span>Premium Fertilizer (Level <span id="premium-level">0</span>) - +25% PPS</span>
+                        <span>Premium Fertilizer (Level <span id="premium-level">0</span>) - +50% PPS</span>
                         <button onclick="buyUpgrade('premium')">
                             Cost: <span id="premium-cost">5000</span> 🥔
                         </button>
@@ -267,19 +267,19 @@
                 <div class="sweet-upgrades">
                     <h3>🍠 Sweet Potato Upgrades</h3>
                     <div class="upgrade-item">
-                        <span>Ultra Shovel - +100% PPC</span>
+                        <span>Ultra Shovel - +300% PPC</span>
                         <button onclick="buySweetUpgrade('ultra')">
                             Cost: <span id="ultra-cost">1</span> 🍠
                         </button>
                     </div>
                     <div class="upgrade-item">
-                        <span>Mega Fertilizer - +200% PPS</span>
+                        <span>Mega Fertilizer - +500% PPS</span>
                         <button onclick="buySweetUpgrade('mega')">
                             Cost: <span id="mega-cost">3</span> 🍠
                         </button>
                     </div>
                     <div class="upgrade-item">
-                        <span>Potato Paradise - +500% all production</span>
+                        <span>Potato Paradise - +1100% all production</span>
                         <button onclick="buySweetUpgrade('paradise')">
                             Cost: <span id="paradise-cost">10</span> 🍠
                         </button>
@@ -298,11 +298,11 @@
             ppc: 1,
             pps: 0,
             upgrades: {
-                shovel: { level: 0, cost: 10, effect: 1 },
-                golden: { level: 0, cost: 100, effect: 5 },
-                harvester: { level: 0, cost: 1000, effect: 20 },
-                basic: { level: 0, cost: 500, effect: 0.1 },
-                premium: { level: 0, cost: 5000, effect: 0.25 }
+                shovel: { level: 0, cost: 10, effect: 2 },
+                golden: { level: 0, cost: 100, effect: 10 },
+                harvester: { level: 0, cost: 1000, effect: 40 },
+                basic: { level: 0, cost: 500, effect: 0.2 },
+                premium: { level: 0, cost: 5000, effect: 0.5 }
             },
             workers: {
                 lazy: { count: 0, cost: 50, effect: 0.5 },
@@ -335,8 +335,8 @@
         // Harvest potato
         function harvestPotato() {
             let gain = game.ppc;
-            if (game.sweetUpgrades.ultra.owned) gain *= 2;
-            if (game.sweetUpgrades.paradise.owned) gain *= 6;
+            if (game.sweetUpgrades.ultra.owned) gain *= 4;
+            if (game.sweetUpgrades.paradise.owned) gain *= 12;
             
             game.potatoes += gain;
             game.totalPotatoes += gain;
@@ -396,8 +396,8 @@
             multiplier += game.upgrades.basic.level * game.upgrades.basic.effect;
             multiplier += game.upgrades.premium.level * game.upgrades.premium.effect;
             
-            if (game.sweetUpgrades.mega.owned) multiplier *= 3;
-            if (game.sweetUpgrades.paradise.owned) multiplier *= 6;
+            if (game.sweetUpgrades.mega.owned) multiplier *= 6;
+            if (game.sweetUpgrades.paradise.owned) multiplier *= 12;
             
             return base * multiplier;
         }
@@ -409,8 +409,8 @@
             base += game.upgrades.golden.level * game.upgrades.golden.effect;
             base += game.upgrades.harvester.level * game.upgrades.harvester.effect;
             
-            if (game.sweetUpgrades.ultra.owned) base *= 2;
-            if (game.sweetUpgrades.paradise.owned) base *= 6;
+            if (game.sweetUpgrades.ultra.owned) base *= 4;
+            if (game.sweetUpgrades.paradise.owned) base *= 12;
             
             return base;
         }
