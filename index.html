@@ -509,7 +509,6 @@
                 const offlineGains = offlineTime * game.pps;
                 if (offlineGains > 0) {
                     game.potatoes += offlineGains;
-                    alert(`Welcome back! You earned ${Math.floor(offlineGains)} potatoes while you were away.`);
                 }
                 lastFrameTime = now; // Reset frame time to prevent a huge jump
             } else {
